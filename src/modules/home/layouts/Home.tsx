@@ -1,6 +1,8 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography, useMediaQuery } from '@mui/material';
 import Head from 'next/head';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
+
+import { theme } from '@app/styles/theme';
 
 const targetDate = new Date(2022, 11, 2);
 
@@ -21,7 +23,23 @@ export const Home: FC = () => {
 
   const appName = process.env.NEXT_PUBLIC_APP_NAME ?? '';
 
+  const xl = useMediaQuery(theme.breakpoints.up('xl'));
+  const lg = useMediaQuery(theme.breakpoints.up('lg'));
+
   const [daysLeft, setDaysLeft] = useState(getDaysLeft());
+
+  const [containerPaddingX, setContainerPaddingX] = useState<number>();
+  const [containerPaddingY, setContainerPaddingY] = useState<number>();
+
+  const [defaultSpacing, setDefaultSpacing] = useState<number>();
+  const [detailsSpacing, setDetailsSpacing] = useState<number>();
+
+  type TextVariantType = 'h1' | 'h2' | 'h4' | 'h6';
+
+  const [largeHeaderVariant, setLargeHeaderVariant] =
+    useState<TextVariantType>();
+  const [timerVariant, setTimerVariant] = useState<TextVariantType>();
+  const [miscTextVariant, setMiscTextVariant] = useState<TextVariantType>();
 
   // Timer
 
@@ -29,17 +47,52 @@ export const Home: FC = () => {
     setDaysLeft(getDaysLeft());
   }, 1000);
 
+  // Effects
+
+  useEffect(() => {
+    setContainerPaddingX(8);
+    setContainerPaddingY(8);
+
+    setDefaultSpacing(2);
+    setDetailsSpacing(0);
+
+    setLargeHeaderVariant('h4');
+    setTimerVariant('h2');
+    setMiscTextVariant('h6');
+
+    if (lg) {
+      setContainerPaddingX(16);
+
+      setDefaultSpacing(8);
+
+      setLargeHeaderVariant('h2');
+      setTimerVariant('h1');
+      setMiscTextVariant('h4');
+    }
+    if (xl) {
+      setContainerPaddingX(32);
+      setContainerPaddingY(16);
+    }
+  }, [xl, lg]);
+
   // Element
 
   return (
-    <Box paddingX={32} paddingY={16}>
+    <Box
+      position="absolute"
+      width="100%"
+      height="100%"
+      paddingX={containerPaddingX}
+      paddingY={containerPaddingY}
+      overflow="auto"
+    >
       <Head>
         <title>{appName}</title>
       </Head>
 
-      <Stack spacing={8}>
+      <Stack spacing={defaultSpacing}>
         <Typography
-          variant="h2"
+          variant={largeHeaderVariant}
           component="span"
           textAlign="center"
           fontWeight="bold"
@@ -49,7 +102,7 @@ export const Home: FC = () => {
 
         <Stack direction="column" alignSelf="center" alignItems="baseline">
           <Typography
-            variant="h1"
+            variant={timerVariant}
             component="span"
             width="100%"
             textAlign="center"
@@ -58,7 +111,7 @@ export const Home: FC = () => {
             {daysLeft}
           </Typography>
           <Typography
-            variant="h4"
+            variant={miscTextVariant}
             component="span"
             width="100%"
             textAlign="center"
@@ -67,30 +120,42 @@ export const Home: FC = () => {
           </Typography>
         </Stack>
 
-        <Stack spacing={2}>
+        <Stack spacing={detailsSpacing}>
           <Stack direction="row" spacing={1} alignItems="baseline">
-            <Typography variant="h4" component="span" fontWeight="bold">
+            <Typography
+              variant={miscTextVariant}
+              component="span"
+              fontWeight="bold"
+            >
               Date:
             </Typography>
-            <Typography variant="h4" component="span">
+            <Typography variant={miscTextVariant} component="span">
               December 2, 2022
             </Typography>
           </Stack>
 
           <Stack direction="row" spacing={1} alignItems="baseline">
-            <Typography variant="h4" component="span" fontWeight="bold">
+            <Typography
+              variant={miscTextVariant}
+              component="span"
+              fontWeight="bold"
+            >
               Event:
             </Typography>
-            <Typography variant="h4" component="span">
+            <Typography variant={miscTextVariant} component="span">
               XU Agricultural and Biosystems Engineering Class 1985 Reunion
             </Typography>
           </Stack>
 
           <Stack direction="row" spacing={1} alignItems="baseline">
-            <Typography variant="h4" component="span" fontWeight="bold">
+            <Typography
+              variant={miscTextVariant}
+              component="span"
+              fontWeight="bold"
+            >
               Venue:
             </Typography>
-            <Typography variant="h4" component="span">
+            <Typography variant={miscTextVariant} component="span">
               Signature Resort Initao
             </Typography>
           </Stack>
